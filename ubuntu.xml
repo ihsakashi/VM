@@ -1,0 +1,44 @@
+<domain type='qemu' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
+    <name>ubuntu</name>
+    <uuid>7F374AA0-E2A5-4A5E-AB34-AAC42C25A094</uuid>
+    <memory unit='MiB'>8192</memory>
+    <vcpu>8</vcpu>
+    <os firmware='efi'>
+        <type arch='aarch64' machine='virt'>hvm</type>
+        <loader readonly='yes' secure='no' type='pflash'>/opt/homebrew/share/qemu/edk2-aarch64-code.fd</loader>
+        <nvram template='/opt/homebrew/share/qemu/edk2-arm-vars.fd'>_WHEREVER_/edk2-arm-vars.fd</nvram>
+        <boot dev='hd'/>
+    </os>
+    <features>
+        <acpi/>
+        <apic/>
+        <gic version='2'/>
+    </features>
+    <cpu mode='custom' match='exact'>
+        <model fallback='forbid'>host</model>
+     </cpu>
+    <clock offset='localtime'/>
+    <devices>
+        <emulator>/opt/homebrew/bin/qemu-system-aarch64</emulator>
+        <controller type='usb' model='qemu-xhci'/>
+        <disk type='file' device='disk'>
+            <driver name='qemu' type='raw'/>
+            <source file='_WHEREVER_/ubuntu-21.04-live-server-arm64.iso'/>
+            <target dev='hdc' bus='virtio'/>
+        </disk>
+        <console type='pty'>
+            <target type='serial'/>
+        </console>
+        <input type='tablet' bus='usb'/>
+        <input type='keyboard' bus='usb'/>
+    </devices>
+    <seclabel type='none'/>
+    <qemu:commandline>
+        <qemu:arg value='-machine'/>
+        <qemu:arg value='type=virt,accel=hvf,highmem=off'/>
+        <qemu:arg value='-device'/>
+        <qemu:arg value='virtio-net-pci,mac=AA:AA:AA:AA:AA:AA,netdev=net0'/>
+        <qemu:arg value='-netdev'/>
+        <qemu:arg value='user,id=net0,hostfwd=tcp::22-:9022'/>
+    </qemu:commandline>
+</domain>
